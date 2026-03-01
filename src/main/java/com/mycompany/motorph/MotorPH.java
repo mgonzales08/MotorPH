@@ -58,6 +58,7 @@ public class MotorPH {
             runPayrollPortal(sc);
         } else {
             System.out.println("Wrong credentials. Please try again.");
+            sc.close();
         }
     }
 
@@ -85,6 +86,7 @@ public class MotorPH {
 
             } else if ("2".equals(pick)) {
                 System.out.println("Closing!");
+                sc.close();
                 break;
             } else {
                 System.out.println("Please enter 1 or 2 only.");
@@ -103,6 +105,7 @@ public class MotorPH {
                 runPayslipMenu(sc);
             } else if ("2".equals(pick)) {
                 System.out.println("Closing payroll system.");
+                sc.close();
                 break;
             } else {
                 System.out.println("Please enter 1 or 2 only.");
@@ -285,7 +288,6 @@ public class MotorPH {
                 hrRate[i]   = c[18].replace(",", "");
                 i++;
             }
-            f.close();
         } catch (FileNotFoundException e) {
             System.out.println("Could not open employee file: " + e.getMessage());
             System.exit(1);
@@ -306,7 +308,6 @@ public class MotorPH {
                 timeOut[i]   = c[5];
                 i++;
             }
-            f.close();
         } catch (FileNotFoundException e) {
             System.out.println("Could not open DTR file: " + e.getMessage());
             System.exit(1);
