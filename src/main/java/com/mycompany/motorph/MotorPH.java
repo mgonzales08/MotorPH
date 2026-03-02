@@ -57,7 +57,7 @@ public class MotorPH {
         } else if ("payroll_staff".equals(user) && "12345".equals(pass)) {
             runPayrollPortal(sc);
         } else {
-            System.out.println("Wrong credentials. Please try again.");
+            System.out.println("Incorrect username and/or password. Please try again.");
             sc.close();
         }
     }
@@ -82,10 +82,10 @@ public class MotorPH {
                         break;
                     }
                 }
-                if (!hit) System.out.println("Employee not found. Check the number and try again.");
+                if (!hit) System.out.println("Employee number does not exist. Please check the number and try again.");
 
             } else if ("2".equals(pick)) {
-                System.out.println("Closing!");
+                System.out.println("Exiting payroll system.");
                 sc.close();
                 break;
             } else {
@@ -104,7 +104,7 @@ public class MotorPH {
             if ("1".equals(pick)) {
                 runPayslipMenu(sc);
             } else if ("2".equals(pick)) {
-                System.out.println("Closing payroll system.");
+                System.out.println("Exiting payroll system.");
                 sc.close();
                 break;
             } else {
@@ -128,7 +128,7 @@ public class MotorPH {
             } else if ("3".equals(pick)) {
                 break;
             } else {
-                System.out.println("Please enter 1, 2, or 3.");
+                System.out.println("Please enter 1, 2, or 3 only.");
             }
         }
     }
@@ -141,7 +141,7 @@ public class MotorPH {
         for (int i = 0; i < empNum.length; i++) {
             if (num.equals(empNum[i])) { idx = i; break; }
         }
-        if (idx == -1) { System.out.println("No employee found with that number."); return; }
+        if (idx == -1) { System.out.println("Employee number does not exist."); return; }
 
         int mo = chooseMonth(sc);
         if (mo == -1) return;
@@ -477,7 +477,7 @@ public class MotorPH {
                 case "6": return 11;
                 case "7": return 12;
                 case "8": return -1;
-                default: System.out.println("Pick a number from 1 to 8.");
+                default: System.out.println("Please enter a number from 1 to 8.");
             }
         }
     }
