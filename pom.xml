@@ -11,20 +11,28 @@
         <exec.mainClass>com.mycompany.motorph.MotorPH</exec.mainClass>
     </properties>
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>com.mycompany.motorph.MotorPH</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-        </plugins>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.13.0</version> <configuration>
+                <release>25</release>
+            </configuration>
+        </plugin>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.4.1</version>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <addClasspath>true</addClasspath>
+                        <mainClass>com.mycompany.motorph.MotorPH</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+    </plugins>
     </build>
 </project>
