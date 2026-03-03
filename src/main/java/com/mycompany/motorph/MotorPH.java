@@ -146,35 +146,30 @@ public class MotorPH {
         int mo = chooseMonth(sc);
         if (mo == -1) return;
 
-        double rate   = Double.parseDouble(hrRate[idx]);
-        double base   = Double.parseDouble(basePay[idx]);
+        double rate = Double.parseDouble(hrRate[idx]);
+        double base = Double.parseDouble(basePay[idx]);
 
         double hrs1   = getHours(num, "first",  mo);
         double hrs2   = getHours(num, "second", mo);
         double gross1 = hrs1 * rate;
         double gross2 = hrs2 * rate;
 
-        // late deductions — based on minutes late from 8:00 AM (grace until 8:10)
-        double lateHrs1 = minsLate(num, mo, "first")  / 60.0;
-        double lateHrs2 = minsLate(num, mo, "second") / 60.0;
-        double lateDed1 = lateHrs1 * rate;
-        double lateDed2 = lateHrs2 * rate;
-
         // gov't contributions computed on combined gross for the month
-        double combined  = gross1 + gross2;
-        double sss       = sssTable(combined);
+        double combined   = gross1 + gross2;
+        double sss        = sssTable(combined);
         double philhealth = philhealthShare(combined);
-        double pagibig   = pagibigShare(base); // pagibig uses contracted salary per HDMF rules
-        double taxable   = combined - sss - philhealth - pagibig;
-        double whTax     = withholdingTax(taxable);
-        double totalDed  = sss + philhealth + pagibig + whTax;
+        double pagibig    = pagibigShare(base); // pagibig uses contracted salary per HDMF rules
+        double taxable    = combined - sss - philhealth - pagibig;
+        double whTax      = withholdingTax(taxable);
+        double totalDed   = sss + philhealth + pagibig + whTax;
 
-        double net1 = gross1 - lateDed1;
-        double net2 = gross2 - lateDed2 - totalDed;
+        // net salary — late arrivals naturally earn less since hours are based on actual time in
+        double net1 = gross1;
+        double net2 = gross2 - totalDed;
 
-        String mn    = monthLabel(mo);
-        int lastDay  = YearMonth.of(2024, mo).lengthOfMonth();
-        double cap2  = (lastDay == 31) ? 88.0 : 80.0;
+        String mn   = monthLabel(mo);
+        int lastDay = YearMonth.of(2024, mo).lengthOfMonth();
+        double cap2 = (lastDay == 31) ? 88.0 : 80.0;
 
         System.out.println("\n----Employee Details----");
         System.out.println("Employee #   : " + empNum[idx]);
@@ -187,9 +182,6 @@ public class MotorPH {
         System.out.println("========================================");
         System.out.println("Total Hours Worked : " + String.format("%.2f", hrs1) + " / 80.00 hrs");
         System.out.println("Gross Salary       : Php" + String.format("%.2f", gross1));
-        System.out.println("\n--- Tardiness Deduction ---");
-        System.out.println("  Late Hours      : " + String.format("%.2f", lateHrs1) + " hr(s)");
-        System.out.println("  Late Deduction  : Php" + String.format("%.2f", lateDed1));
         System.out.println("Net Salary         : Php" + String.format("%.2f", net1));
 
         System.out.println("\n========================================");
@@ -198,9 +190,6 @@ public class MotorPH {
         System.out.println("========================================");
         System.out.println("Total Hours Worked : " + String.format("%.2f", hrs2) + " / " + String.format("%.2f", cap2) + " hrs");
         System.out.println("Gross Salary       : Php" + String.format("%.2f", gross2));
-        System.out.println("\n--- Tardiness Deduction ---");
-        System.out.println("  Late Hours      : " + String.format("%.2f", lateHrs2) + " hr(s)");
-        System.out.println("  Late Deduction  : Php" + String.format("%.2f", lateDed2));
         System.out.println("\n--- Statutory Deductions ---");
         System.out.println("  SSS             : Php" + String.format("%.2f", sss));
         System.out.println("  PhilHealth      : Php" + String.format("%.2f", philhealth));
@@ -215,9 +204,9 @@ public class MotorPH {
         int mo = chooseMonth(sc);
         if (mo == -1) return;
 
-        String mn    = monthLabel(mo);
-        int lastDay  = YearMonth.of(2024, mo).lengthOfMonth();
-        double cap2  = (lastDay == 31) ? 88.0 : 80.0;
+        String mn   = monthLabel(mo);
+        int lastDay = YearMonth.of(2024, mo).lengthOfMonth();
+        double cap2 = (lastDay == 31) ? 88.0 : 80.0;
 
         for (int i = 0; i < empNum.length; i++) {
             if (empNum[i] == null) continue;
@@ -231,11 +220,6 @@ public class MotorPH {
             double gross1 = hrs1 * rate;
             double gross2 = hrs2 * rate;
 
-            double lateHrs1 = minsLate(num, mo, "first")  / 60.0;
-            double lateHrs2 = minsLate(num, mo, "second") / 60.0;
-            double lateDed1 = lateHrs1 * rate;
-            double lateDed2 = lateHrs2 * rate;
-
             double combined   = gross1 + gross2;
             double sss        = sssTable(combined);
             double philhealth = philhealthShare(combined);
@@ -244,8 +228,8 @@ public class MotorPH {
             double whTax      = withholdingTax(taxable);
             double totalDed   = sss + philhealth + pagibig + whTax;
 
-            double net1 = gross1 - lateDed1;
-            double net2 = gross2 - lateDed2 - totalDed;
+            double net1 = gross1;
+            double net2 = gross2 - totalDed;
 
             System.out.println("\n========================================");
             System.out.println("Employee #   : " + num);
@@ -254,14 +238,10 @@ public class MotorPH {
             System.out.println("\n  Cutoff: " + mn + " 1 to " + mn + " 15");
             System.out.println("  Total Hours Worked : " + String.format("%.2f", hrs1) + " / 80.00 hrs");
             System.out.println("  Gross Salary       : Php" + String.format("%.2f", gross1));
-            System.out.println("  Late Hours         : " + String.format("%.2f", lateHrs1) + " hr(s)");
-            System.out.println("  Late Deduction     : Php" + String.format("%.2f", lateDed1));
             System.out.println("  Net Salary         : Php" + String.format("%.2f", net1));
             System.out.println("\n  Cutoff: " + mn + " 16 to " + mn + " " + lastDay);
             System.out.println("  Total Hours Worked : " + String.format("%.2f", hrs2) + " / " + String.format("%.2f", cap2) + " hrs");
             System.out.println("  Gross Salary       : Php" + String.format("%.2f", gross2));
-            System.out.println("  Late Hours         : " + String.format("%.2f", lateHrs2) + " hr(s)");
-            System.out.println("  Late Deduction     : Php" + String.format("%.2f", lateDed2));
             System.out.println("  SSS                : Php" + String.format("%.2f", sss));
             System.out.println("  PhilHealth         : Php" + String.format("%.2f", philhealth));
             System.out.println("  Pag-IBIG           : Php" + String.format("%.2f", pagibig));
@@ -280,14 +260,15 @@ public class MotorPH {
             int i = 0;
             while (f.hasNextLine()) {
                 String[] c = splitCSV(f.nextLine());
-                empNum[i]   = c[0];
-                lname[i]    = c[1];
-                fname[i]    = c[2];
-                bday[i]     = c[3];
-                basePay[i]  = c[13].replace(",", "");
-                hrRate[i]   = c[18].replace(",", "");
+                empNum[i]  = c[0];
+                lname[i]   = c[1];
+                fname[i]   = c[2];
+                bday[i]    = c[3];
+                basePay[i] = c[13].replace(",", "");
+                hrRate[i]  = c[18].replace(",", "");
                 i++;
             }
+            f.close();
         } catch (FileNotFoundException e) {
             System.out.println("Could not open employee file: " + e.getMessage());
             System.exit(1);
@@ -301,13 +282,14 @@ public class MotorPH {
             if (f.hasNextLine()) f.nextLine();
             int i = 0;
             while (f.hasNextLine()) {
-                String[] c  = splitCSV(f.nextLine());
+                String[] c   = splitCSV(f.nextLine());
                 dtrEmpNum[i] = c[0];
                 dtrDate[i]   = c[3];
                 timeIn[i]    = c[4];
                 timeOut[i]   = c[5];
                 i++;
             }
+            f.close();
         } catch (FileNotFoundException e) {
             System.out.println("Could not open DTR file: " + e.getMessage());
             System.exit(1);
@@ -347,7 +329,7 @@ public class MotorPH {
             if (dtrDate[j] == null) continue;
             try {
                 String[] d = dtrDate[j].trim().split("/");
-                int m = Integer.parseInt(d[0]);
+                int m   = Integer.parseInt(d[0]);
                 int day = Integer.parseInt(d[1]);
                 if (m != mo) continue;
                 if ("first".equals(half)  && day >= 1  && day <= 15) total += dailyHours[j];
@@ -358,33 +340,6 @@ public class MotorPH {
         int lastDay = YearMonth.of(2024, mo).lengthOfMonth();
         int maxDays = "first".equals(half) ? 10 : (lastDay == 31 ? 11 : 10);
         return Math.min(total, maxDays * 8.0);
-    }
-
-    // returns total late minutes for an employee in a given cutoff
-    static double minsLate(String num, int mo, String half) {
-        double lateTotal = 0;
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("H:mm", Locale.ENGLISH);
-        LocalTime grace = LocalTime.of(8, 10);
-        LocalTime start = LocalTime.of(8, 0);
-
-        for (int j = 0; j < 5168; j++) {
-            if (!num.equals(dtrEmpNum[j])) continue;
-            if (dtrDate[j] == null || timeIn[j] == null) continue;
-            try {
-                String[] d = dtrDate[j].trim().split("/");
-                int m   = Integer.parseInt(d[0]);
-                int day = Integer.parseInt(d[1]);
-                if (m != mo) continue;
-                if ("first".equals(half)  && (day < 1  || day > 15)) continue;
-                if ("second".equals(half) && (day < 16 || day > 31)) continue;
-
-                LocalTime tin = LocalTime.parse(timeIn[j].trim(), fmt);
-                if (tin.isAfter(grace)) {
-                    lateTotal += Duration.between(start, tin).toMinutes();
-                }
-            } catch (Exception ignored) {}
-        }
-        return lateTotal;
     }
 
     // SSS contribution table (based on 2023 schedule)
