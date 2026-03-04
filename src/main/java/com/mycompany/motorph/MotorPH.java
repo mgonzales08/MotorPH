@@ -4,11 +4,6 @@
 
 package com.mycompany.motorph;
 
-/**
- *
- * @author Marlu
- */
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.time.LocalTime;
@@ -18,6 +13,22 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Scanner;
 
+/**
+ * ==============================================================
+ * Contains most of the primary variables for use in the system.
+ * Also contains all methods needed to run the program.
+ * Handles CSV data reading, employee details presentation,
+ * estimation of working hours, and payroll calculation
+ * from June to December 2024.
+ * 
+ * @author Cail Maven Lusares
+ * @author Dominic Gideon Remetio Abad
+ * @author Dominic Lagitao
+ * @author Luis Carlo Dayag
+ * @author Marlu Gonzales
+ * @version 1.0
+ * ==============================================================
+ */
 public class MotorPH {
 
     // employee master list (34 employees in the company)
@@ -38,6 +49,13 @@ public class MotorPH {
     static LocalTime[] parsedOut  = new LocalTime[5168];
     static double[]    dailyHours = new double[5168];
 
+    /**
+     * This starts the MotorPH Payroll System.
+     * This method starts the whole system by loading the CSV files,
+     * computing daily hours, and checking login credentials.
+     * @param args command-line arguments (not used)
+     * @throws FileNotFoundException if the employee or DTR CSV files are in the same directory as the code. 
+     */
     public static void main(String[] args) throws FileNotFoundException {
 
         loadEmployees("resources/motorphemployeedata.csv");
@@ -61,7 +79,16 @@ public class MotorPH {
             sc.close();
         }
     }
-
+    
+    /**
+     * ==============================================================
+     * Displays the employee portal menu.
+     * For displaying employee details/exiting the system.
+     * NO access to payroll processing.
+     * 
+     * @param sc Scanner object used to read user input.
+     * ==============================================================
+     */
     static void runEmployeePortal(Scanner sc) {
         while (true) {
             System.out.println("\n---- Employee Portal ----");
@@ -87,14 +114,14 @@ public class MotorPH {
             } else if ("2".equals(pick)) {
                 System.out.println("Exiting payroll system.");
                 sc.close();
-                break;
+                System.exit(0);
             } else {
                 System.out.println("Please enter 1 or 2 only.");
             }
         }
     }
 
-     /**
+    /**
      * ==============================================================
      * Displays the payroll portal menu and handles user interaction.
      * For generating a payslip/exiting the system.
@@ -114,19 +141,27 @@ public class MotorPH {
             } else if ("2".equals(pick)) {
                 System.out.println("Exiting payroll system.");
                 sc.close();
-                break;
+                System.exit(0);
             } else {
                 System.out.println("Please enter 1 or 2 only.");
             }
         }
     }
 
+    /**
+     * ==============================================================
+     * Displays the payslip processing menu.
+     * For deciding whether to process for one employee or for all employees.
+     * 
+     * @param sc Scanner object used to read user input.
+     * ==============================================================
+     */
     static void runPayslipMenu(Scanner sc) {
         while (true) {
             System.out.println("\n---- Generate Payslip ----");
             System.out.println("[1] Single Employee");
             System.out.println("[2] All Employees");
-            System.out.println("[3] Back");
+            System.out.println("[3] Exit");
             String pick = sc.nextLine().trim();
 
             if ("1".equals(pick)) {
@@ -134,13 +169,28 @@ public class MotorPH {
             } else if ("2".equals(pick)) {
                 processAllEmployees(sc);
             } else if ("3".equals(pick)) {
-                break;
+                System.out.println("Exiting payroll system.");
+                sc.close();
+                System.exit(0);
             } else {
                 System.out.println("Please enter 1, 2, or 3 only.");
             }
         }
     }
 
+    /**
+     * ==============================================================
+     * Process payroll for one employee.
+     * 
+     * This method uses a for loop to continue running the logic from June to December.
+     * Then, the user is prompted to type a valid Employee ID.
+     * The system then searches for the employee related to that ID.
+     * Afterwards, it calculates hours worked, gross salary, government deductions, and net salary for each employee.
+     * Finally, it prints a payroll summary for each employee.
+     * 
+     * @param sc Scanner object used to read user input.
+     * ==============================================================
+     */
     static void processSingleEmployee(Scanner sc) {
         System.out.print("Employee No.: ");
         String num = sc.nextLine().trim();
@@ -151,68 +201,67 @@ public class MotorPH {
         }
         if (idx == -1) { System.out.println("Employee number does not exist."); return; }
 
-        int mo = chooseMonth(sc);
-        if (mo == -1) return;
+        for (int mo = 6; mo <= 12; mo++) {
+            double rate = Double.parseDouble(hrRate[idx]);
+            double base = Double.parseDouble(basePay[idx]);
 
-        double rate = Double.parseDouble(hrRate[idx]);
-        double base = Double.parseDouble(basePay[idx]);
+            double hrs1   = getHours(num, "first",  mo);
+            double hrs2   = getHours(num, "second", mo);
+            double gross1 = hrs1 * rate;
+            double gross2 = hrs2 * rate;
 
-        double hrs1   = getHours(num, "first",  mo);
-        double hrs2   = getHours(num, "second", mo);
-        double gross1 = hrs1 * rate;
-        double gross2 = hrs2 * rate;
+            // gov't contributions computed on combined gross for the month
+            double combined   = gross1 + gross2;
+            double sss        = sssTable(combined);
+            double philhealth = philhealthShare(combined);
+            double pagibig    = pagibigShare(base); // pagibig uses contracted salary per HDMF rules
+            double taxable    = combined - sss - philhealth - pagibig;
+            double whTax      = withholdingTax(taxable);
+            double totalDed   = sss + philhealth + pagibig + whTax;
 
-        // gov't contributions computed on combined gross for the month
-        double combined   = gross1 + gross2;
-        double sss        = sssTable(combined);
-        double philhealth = philhealthShare(combined);
-        double pagibig    = pagibigShare(base); // pagibig uses contracted salary per HDMF rules
-        double taxable    = combined - sss - philhealth - pagibig;
-        double whTax      = withholdingTax(taxable);
-        double totalDed   = sss + philhealth + pagibig + whTax;
+            // net salary — late arrivals naturally earn less since hours are based on actual time in
+            double net1 = gross1;
+            double net2 = gross2 - totalDed;
 
-        // net salary — late arrivals naturally earn less since hours are based on actual time in
-        double net1 = gross1;
-        double net2 = gross2 - totalDed;
+            String mn   = monthLabel(mo);
+            int lastDay = YearMonth.of(2024, mo).lengthOfMonth();
+            double cap2 = (lastDay == 31) ? 88.0 : 80.0;
 
-        String mn   = monthLabel(mo);
-        int lastDay = YearMonth.of(2024, mo).lengthOfMonth();
-        double cap2 = (lastDay == 31) ? 88.0 : 80.0;
+            System.out.println("\n----Employee Details----");
+            System.out.println("Employee #   : " + empNum[idx]);
+            System.out.println("Employee Name: " + fname[idx] + " " + lname[idx]);
+            System.out.println("Birthday     : " + bday[idx]);
 
-        System.out.println("\n----Employee Details----");
-        System.out.println("Employee #   : " + empNum[idx]);
-        System.out.println("Employee Name: " + fname[idx] + " " + lname[idx]);
-        System.out.println("Birthday     : " + bday[idx]);
+            System.out.println("\n========================================");
+            System.out.println("  Cutoff: " + mn + " 1 to " + mn + " 15");
+            System.out.println("  (8 hrs/day x 5 days/wk x 2 wks = 80 hrs max)");
+            System.out.println("========================================");
+            System.out.println("Total Hours Worked : " + hrs1 + " / 80.00 hrs");
+            System.out.println("Gross Salary       : Php" +  gross1);
+            System.out.println("Net Salary         : Php" + net1);
 
-        System.out.println("\n========================================");
-        System.out.println("  Cutoff: " + mn + " 1 to " + mn + " 15");
-        System.out.println("  (8 hrs/day x 5 days/wk x 2 wks = 80 hrs max)");
-        System.out.println("========================================");
-        System.out.println("Total Hours Worked : " + hrs1 + " / 80.00 hrs");
-        System.out.println("Gross Salary       : Php" +  gross1);
-        System.out.println("Net Salary         : Php" + net1);
-
-        System.out.println("\n========================================");
-        System.out.println("  Cutoff: " + mn + " 16 to " + mn + " " + lastDay);
-        System.out.println("  (8 hrs/day x 5 days/wk x 2 wks = " + cap2 + " hrs max)");
-        System.out.println("========================================");
-        System.out.println("Total Hours Worked : " + hrs2 + " / " + cap2 + " hrs");
-        System.out.println("Gross Salary       : Php" + gross2);
-        System.out.println("\n--- Statutory Deductions ---");
-        System.out.println("  SSS             : Php" + sss);
-        System.out.println("  PhilHealth      : Php" + philhealth);
-        System.out.println("  Pag-IBIG        : Php" + pagibig);
-        System.out.println("  Tax             : Php" + whTax);
-        System.out.println("  Subtotal        : Php" + totalDed);
-        System.out.println("Net Salary         : Php" + net2);
-        System.out.println("========================================");
+            System.out.println("\n========================================");
+            System.out.println("  Cutoff: " + mn + " 16 to " + mn + " " + lastDay);
+            System.out.println("  (8 hrs/day x 5 days/wk x 2 wks = " + cap2 + " hrs max)");
+            System.out.println("========================================");
+            System.out.println("Total Hours Worked : " + hrs2 + " / " + cap2 + " hrs");
+            System.out.println("Gross Salary       : Php" + gross2);
+            System.out.println("\n--- Statutory Deductions ---");
+            System.out.println("  SSS             : Php" + sss);
+            System.out.println("  PhilHealth      : Php" + philhealth);
+            System.out.println("  Pag-IBIG        : Php" + pagibig);
+            System.out.println("  Tax             : Php" + whTax);
+            System.out.println("  Subtotal        : Php" + totalDed);
+            System.out.println("Net Salary         : Php" + net2);
+            System.out.println("========================================");
+        }
     }
     
     /**
      * ==============================================================================================================
      * Process payroll for all employees (bulk).
      * 
-     * This method prompts the user to select a month.
+     * This method uses a for loop to continue running the logic from June to December.
      * Then, the for loop iterates through all employees in the system.
      * Afterwards, it calculates hours worked, gross salary, government deductions, and net salary for each employee.
      * Finally, it prints a payroll summary for each employee.
@@ -221,65 +270,77 @@ public class MotorPH {
      * ==============================================================================================================
      */
     static void processAllEmployees(Scanner sc) {
-        // Select a month.
-        int mo = chooseMonth(sc);
-        if (mo == -1) return;
+        // Loops from June to December
+        for (int mo = 6; mo <= 12; mo++) {
+            // Maximum hours for second cutoff; 88 if month has 31 days, else 80.
+            String mn   = monthLabel(mo);
+            int lastDay = YearMonth.of(2024, mo).lengthOfMonth();
+            double cap2 = (lastDay == 31) ? 88.0 : 80.0;
 
-        // Maximum hours for second cutoff; 88 if month has 31 days, else 80.
-        String mn   = monthLabel(mo);
-        int lastDay = YearMonth.of(2024, mo).lengthOfMonth();
-        double cap2 = (lastDay == 31) ? 88.0 : 80.0;
+            // Loop through all employees.
+            for (int i = 0; i < empNum.length; i++) {
+                if (empNum[i] == null) continue;
 
-        // Loop through all employees.
-        for (int i = 0; i < empNum.length; i++) {
-            if (empNum[i] == null) continue;
+                String num  = empNum[i];
+                double rate = Double.parseDouble(hrRate[i]);
+                double base = Double.parseDouble(basePay[i]);
 
-            String num  = empNum[i];
-            double rate = Double.parseDouble(hrRate[i]);
-            double base = Double.parseDouble(basePay[i]);
+                // Compute hours and gross pay for first and second cutoff.
+                double hrs1   = getHours(num, "first",  mo);
+                double hrs2   = getHours(num, "second", mo);
+                double gross1 = hrs1 * rate;
+                double gross2 = hrs2 * rate;
 
-            // Compute hours and gross pay for first and second cutoff.
-            double hrs1   = getHours(num, "first",  mo);
-            double hrs2   = getHours(num, "second", mo);
-            double gross1 = hrs1 * rate;
-            double gross2 = hrs2 * rate;
+                // Compute government deductions.
+                double combined   = gross1 + gross2;
+                double sss        = sssTable(combined);
+                double philhealth = philhealthShare(combined);
+                double pagibig    = pagibigShare(base);
+                double taxable    = combined - sss - philhealth - pagibig;
+                double whTax      = withholdingTax(taxable);
+                double totalDed   = sss + philhealth + pagibig + whTax;
 
-            // Compute government deductions.
-            double combined   = gross1 + gross2;
-            double sss        = sssTable(combined);
-            double philhealth = philhealthShare(combined);
-            double pagibig    = pagibigShare(base);
-            double taxable    = combined - sss - philhealth - pagibig;
-            double whTax      = withholdingTax(taxable);
-            double totalDed   = sss + philhealth + pagibig + whTax;
+                // Compute net salaries.
+                double net1 = gross1;
+                double net2 = gross2 - totalDed;
 
-            // Compute net salaries.
-            double net1 = gross1;
-            double net2 = gross2 - totalDed;
-
-            // Print employee payroll summary.
-            System.out.println("\n========================================");
-            System.out.println("Employee #   : " + num);
-            System.out.println("Name         : " + fname[i] + " " + lname[i]);
-            System.out.println("Birthday     : " + bday[i]);
-            System.out.println("\n  Cutoff: " + mn + " 1 to " + mn + " 15");
-            System.out.println("  Total Hours Worked : " + hrs1 + " / 80.00 hrs");
-            System.out.println("  Gross Salary       : Php" + gross1);
-            System.out.println("  Net Salary         : Php" + net1);
-            System.out.println("\n  Cutoff: " + mn + " 16 to " + mn + " " + lastDay);
-            System.out.println("  Total Hours Worked : " + hrs2 + " / " + cap2 + " hrs");
-            System.out.println("  Gross Salary       : Php" + gross2);
-            System.out.println("  SSS                : Php" + sss);
-            System.out.println("  PhilHealth         : Php" + philhealth);
-            System.out.println("  Pag-IBIG           : Php" + pagibig);
-            System.out.println("  Tax                : Php" + whTax);
-            System.out.println("  Total Deductions   : Php" + totalDed);
-            System.out.println("  Net Salary         : Php" + net2);
-            System.out.println("========================================");
+                // Print employee payroll summary.
+                System.out.println("\n========================================");
+                System.out.println("Employee #   : " + num);
+                System.out.println("Name         : " + fname[i] + " " + lname[i]);
+                System.out.println("Birthday     : " + bday[i]);
+                System.out.println("\n  Cutoff: " + mn + " 1 to " + mn + " 15");
+                System.out.println("  Total Hours Worked : " + hrs1 + " / 80.00 hrs");
+                System.out.println("  Gross Salary       : Php" + gross1);
+                System.out.println("  Net Salary         : Php" + net1);
+                System.out.println("\n  Cutoff: " + mn + " 16 to " + mn + " " + lastDay);
+                System.out.println("  Total Hours Worked : " + hrs2 + " / " + cap2 + " hrs");
+                System.out.println("  Gross Salary       : Php" + gross2);
+                System.out.println("  SSS                : Php" + sss);
+                System.out.println("  PhilHealth         : Php" + philhealth);
+                System.out.println("  Pag-IBIG           : Php" + pagibig);
+                System.out.println("  Tax                : Php" + whTax);
+                System.out.println("  Total Deductions   : Php" + totalDed);
+                System.out.println("  Net Salary         : Php" + net2);
+                System.out.println("========================================");
+            }
         }
     }
 
-    // loads the employee masterlist CSV
+    /**
+     * ==============================================================================================================
+     * Loads the employee master list CSV.
+     * 
+     * This method first opens the CSV file.
+     * Then, the while loop uses a splitCSV method to slice off the commas.
+     * Once completed, it stores the data from the approriate columns to the correct variables.
+     * The following variables are stored: empNum (employee ID), lname (last name), fname
+     * (first name), bday (birth date), basePay (base pay). and hrRate (hourly rate).
+     * 
+     * @param String The file pathname to the CSV file
+     * @throws FileNotFoundException if the CSV file is not found at the specified path
+     * ==============================================================================================================
+     */
     static void loadEmployees(String path) {
         try {
             Scanner f = new Scanner(new FileReader(path));
@@ -302,7 +363,19 @@ public class MotorPH {
         }
     }
 
-    // loads the daily time record (DTR) file
+    /**
+     * ==============================================================================================================
+     * Loads the daily time record (DTR).
+     * 
+     * This method first opens the CSV file.
+     * Then, the while loop uses a splitCSV method to slice off the commas.
+     * Once completed, it stores the data from the approriate columns to the correct variables.
+     * The following variables are stored: dtrEmpNum (employee ID), dtrDate (date), timeIn, and timeOut.
+     * 
+     * @param String The file pathname to the CSV file
+     * @throws FileNotFoundException if the CSV file is not found at the specified path
+     * ==============================================================================================================
+     */
     static void loadDTR(String path) {
         try {
             Scanner f = new Scanner(new FileReader(path));
@@ -470,27 +543,6 @@ public class MotorPH {
         if (taxable <= 166666) return 10833 + (taxable - 66667) * 0.30;
         if (taxable <= 666666) return 40833.33 + (taxable - 166667) * 0.32;
         return 200833.33 + (taxable - 666666) * 0.35;
-    }
-
-    // quick month selector — returns actual month number (6-12) or -1 to cancel
-    static int chooseMonth(Scanner sc) {
-        while (true) {
-            System.out.println("\nSelect month:");
-            System.out.println("[1] June  \n[2] July  \n[3] August  \n[4] September");
-            System.out.println("[5] October  \n[6] November  \n[7] December  \n[8] Cancel");
-            String in = sc.nextLine().trim();
-            switch (in) {
-                case "1": return 6;
-                case "2": return 7;
-                case "3": return 8;
-                case "4": return 9;
-                case "5": return 10;
-                case "6": return 11;
-                case "7": return 12;
-                case "8": return -1;
-                default: System.out.println("Please enter a number from 1 to 8.");
-            }
-        }
     }
 
     static String monthLabel(int m) {
