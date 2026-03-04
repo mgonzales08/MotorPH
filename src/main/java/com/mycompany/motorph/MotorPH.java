@@ -1,4 +1,3 @@
-/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 
@@ -94,6 +93,14 @@ public class MotorPH {
         }
     }
 
+     /**
+     * ==============================================================
+     * Displays the payroll portal menu and handles user interaction.
+     * For generating a payslip/exiting the system.
+     * 
+     * @param sc Scanner object used to read user input.
+     * ==============================================================
+     */
     static void runPayrollPortal(Scanner sc) {
         while (true) {
             System.out.println("\n---- Payroll Portal ----");
@@ -199,15 +206,30 @@ public class MotorPH {
         System.out.println("Net Salary         : Php" + String.format("%.2f", net2));
         System.out.println("========================================");
     }
-
+    
+    /**
+     * ==============================================================================================================
+     * Process payroll for all employees (bulk).
+     * 
+     * This method prompts the user to select a month.
+     * Then, the for loop iterates through all employees in the system.
+     * Afterwards, it calculates hours worked, gross salary, government deductions, and net salary for each employee.
+     * Finally, it prints a payroll summary for each employee.
+     * 
+     * @param sc Scanner object used to read user input
+     * ==============================================================================================================
+     */
     static void processAllEmployees(Scanner sc) {
+        // Select a month.
         int mo = chooseMonth(sc);
         if (mo == -1) return;
 
+        // Maximum hours for second cutoff; 88 if month has 31 days, else 80.
         String mn   = monthLabel(mo);
         int lastDay = YearMonth.of(2024, mo).lengthOfMonth();
         double cap2 = (lastDay == 31) ? 88.0 : 80.0;
 
+        // Loop through all employees.
         for (int i = 0; i < empNum.length; i++) {
             if (empNum[i] == null) continue;
 
@@ -215,11 +237,13 @@ public class MotorPH {
             double rate = Double.parseDouble(hrRate[i]);
             double base = Double.parseDouble(basePay[i]);
 
+            // Compute hours and gross pay for first and second cutoff.
             double hrs1   = getHours(num, "first",  mo);
             double hrs2   = getHours(num, "second", mo);
             double gross1 = hrs1 * rate;
             double gross2 = hrs2 * rate;
 
+            // Compute government deductions.
             double combined   = gross1 + gross2;
             double sss        = sssTable(combined);
             double philhealth = philhealthShare(combined);
@@ -228,9 +252,11 @@ public class MotorPH {
             double whTax      = withholdingTax(taxable);
             double totalDed   = sss + philhealth + pagibig + whTax;
 
+            // Compute net salaries.
             double net1 = gross1;
             double net2 = gross2 - totalDed;
 
+            // Print employee payroll summary.
             System.out.println("\n========================================");
             System.out.println("Employee #   : " + num);
             System.out.println("Name         : " + fname[i] + " " + lname[i]);
@@ -342,52 +368,65 @@ public class MotorPH {
         return Math.min(total, maxDays * 8.0);
     }
 
-    // SSS contribution table (based on 2023 schedule)
+   /**
+     * ====================================================================
+     * Calculates an employee's SSS contribution based on the gross salary.
+     * 
+     * The contribution is determined using fixed salary brackets. 
+     * Each bracket has a set contribution amount. 
+     * If the employee's salary is within a bracket, 
+     * the method returns the contribution assigned to that bracket.
+     * 
+     * @param gross The employee's gross month salary.
+     * @return The corresponding SSS contribution.
+     * 
+     * ====================================================================
+     */
     static double sssTable(double gross) {
-        if (gross < 3250)  return 135.00;
-        if (gross < 3750)  return 157.50;
-        if (gross < 4250)  return 180.00;
-        if (gross < 4750)  return 202.50;
-        if (gross < 5250)  return 225.00;
-        if (gross < 5750)  return 247.50;
-        if (gross < 6250)  return 270.00;
-        if (gross < 6750)  return 292.50;
-        if (gross < 7250)  return 315.00;
-        if (gross < 7750)  return 337.50;
-        if (gross < 8250)  return 360.00;
-        if (gross < 8750)  return 382.50;
-        if (gross < 9250)  return 405.00;
-        if (gross < 9750)  return 427.50;
-        if (gross < 10250) return 450.00;
-        if (gross < 10750) return 472.50;
-        if (gross < 11250) return 495.00;
-        if (gross < 11750) return 517.50;
-        if (gross < 12250) return 540.00;
-        if (gross < 12750) return 562.50;
-        if (gross < 13250) return 585.00;
-        if (gross < 13750) return 607.50;
-        if (gross < 14250) return 630.00;
-        if (gross < 14750) return 652.50;
-        if (gross < 15250) return 675.00;
-        if (gross < 15750) return 697.50;
-        if (gross < 16250) return 720.00;
-        if (gross < 16750) return 742.50;
-        if (gross < 17250) return 765.00;
-        if (gross < 17750) return 787.50;
-        if (gross < 18250) return 810.00;
-        if (gross < 18750) return 832.50;
-        if (gross < 19250) return 855.00;
-        if (gross < 19750) return 877.50;
-        if (gross < 20250) return 900.00;
-        if (gross < 20750) return 922.50;
-        if (gross < 21250) return 945.00;
-        if (gross < 21750) return 967.50;
-        if (gross < 22250) return 990.00;
-        if (gross < 22750) return 1012.50;
-        if (gross < 23250) return 1035.00;
-        if (gross < 23750) return 1057.50;
-        if (gross < 24250) return 1080.00;
-        if (gross < 24750) return 1102.50;
+        if (gross < 3250)   return 135.00;
+        if (gross <= 3750)  return 157.50;
+        if (gross <= 4250)  return 180.00;
+        if (gross <= 4750)  return 202.50;
+        if (gross <= 5250)  return 225.00;
+        if (gross <= 5750)  return 247.50;
+        if (gross <= 6250)  return 270.00;
+        if (gross <= 6750)  return 292.50;
+        if (gross <= 7250)  return 315.00;
+        if (gross <= 7750)  return 337.50;
+        if (gross <= 8250)  return 360.00;
+        if (gross <= 8750)  return 382.50;
+        if (gross <= 9250)  return 405.00;
+        if (gross <= 9750)  return 427.50;
+        if (gross <= 10250) return 450.00;
+        if (gross <= 10750) return 472.50;
+        if (gross <= 11250) return 495.00;
+        if (gross <= 11750) return 517.50;
+        if (gross <= 12250) return 540.00;
+        if (gross <= 12750) return 562.50;
+        if (gross <= 13250) return 585.00;
+        if (gross <= 13750) return 607.50;
+        if (gross <= 14250) return 630.00;
+        if (gross <= 14750) return 652.50;
+        if (gross <= 15250) return 675.00;
+        if (gross <= 15750) return 697.50;
+        if (gross <= 16250) return 720.00;
+        if (gross <= 16750) return 742.50;
+        if (gross <= 17250) return 765.00;
+        if (gross <= 17750) return 787.50;
+        if (gross <= 18250) return 810.00;
+        if (gross <= 18750) return 832.50;
+        if (gross <= 19250) return 855.00;
+        if (gross <= 19750) return 877.50;
+        if (gross <= 20250) return 900.00;
+        if (gross <= 20750) return 922.50;
+        if (gross <= 21250) return 945.00;
+        if (gross <= 21750) return 967.50;
+        if (gross <= 22250) return 990.00;
+        if (gross <= 22750) return 1012.50;
+        if (gross <= 23250) return 1035.00;
+        if (gross <= 23750) return 1057.50;
+        if (gross <= 24250) return 1080.00;
+        if (gross <= 24750) return 1102.50;
         return 1125.00;
     }
 
@@ -406,7 +445,23 @@ public class MotorPH {
         return Math.min(c, 100.00);
     }
 
-    // BIR withholding tax brackets (monthly)
+    /**
+     * =================================================================================================================================
+     * Calculate an employee's withholding tax.
+     * 
+     * The tax is based on an employee's taxable income.
+     * Each salary bracket has a fixed base tax, plus a percentage of the portion of income that goes above the start of that bracket.
+     * 
+     * Example: Employee's taxable income is is 37567.08
+     * 1. They fall into the 3rd bracket.
+     * 2. The income above the start of the bracket (33,333) is calculated; this is the excess.
+     * 3. The excess is multiplied by the tax rate of 0.25.
+     * 4. Finally, it adds the fixed base tax of 2500 is added to get the total tax.
+     * 
+     * @param taxable The employee's taxable income.
+     * @return The corresponding withholding tax.
+     * =================================================================================================================================
+     */
     static double withholdingTax(double taxable) {
         if (taxable <= 20832)  return 0;
         if (taxable <= 33332)  return (taxable - 20832) * 0.20;
@@ -446,7 +501,17 @@ public class MotorPH {
         }
     }
 
-    // handles CSV fields that may contain commas inside quotes (e.g. "1,500.00")
+    /**
+     * =====================================================================
+     * Splits a CSV line into an array of strings.
+     * 
+     * Handles quoted fields, commas inside quotes are ignored.
+     * Leading and trailing spaces are trimmed from each field.
+     * 
+     * @param line The CSV line to split.
+     * @return An array of strings representing each column in the CSV line.
+     * =====================================================================
+     */
     static String[] splitCSV(String line) {
         boolean quoted = false;
         StringBuilder buf = new StringBuilder();
