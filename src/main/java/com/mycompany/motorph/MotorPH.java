@@ -188,23 +188,23 @@ public class MotorPH {
         System.out.println("  Cutoff: " + mn + " 1 to " + mn + " 15");
         System.out.println("  (8 hrs/day x 5 days/wk x 2 wks = 80 hrs max)");
         System.out.println("========================================");
-        System.out.println("Total Hours Worked : " + String.format("%.2f", hrs1) + " / 80.00 hrs");
-        System.out.println("Gross Salary       : Php" + String.format("%.2f", gross1));
-        System.out.println("Net Salary         : Php" + String.format("%.2f", net1));
+        System.out.println("Total Hours Worked : " + hrs1 + " / 80.00 hrs");
+        System.out.println("Gross Salary       : Php" +  gross1);
+        System.out.println("Net Salary         : Php" + net1);
 
         System.out.println("\n========================================");
         System.out.println("  Cutoff: " + mn + " 16 to " + mn + " " + lastDay);
-        System.out.println("  (8 hrs/day x 5 days/wk x 2 wks = " + String.format("%.0f", cap2) + " hrs max)");
+        System.out.println("  (8 hrs/day x 5 days/wk x 2 wks = " + cap2 + " hrs max)");
         System.out.println("========================================");
-        System.out.println("Total Hours Worked : " + String.format("%.2f", hrs2) + " / " + String.format("%.2f", cap2) + " hrs");
-        System.out.println("Gross Salary       : Php" + String.format("%.2f", gross2));
+        System.out.println("Total Hours Worked : " + hrs2 + " / " + cap2 + " hrs");
+        System.out.println("Gross Salary       : Php" + gross2);
         System.out.println("\n--- Statutory Deductions ---");
-        System.out.println("  SSS             : Php" + String.format("%.2f", sss));
-        System.out.println("  PhilHealth      : Php" + String.format("%.2f", philhealth));
-        System.out.println("  Pag-IBIG        : Php" + String.format("%.2f", pagibig));
-        System.out.println("  Tax             : Php" + String.format("%.2f", whTax));
-        System.out.println("  Subtotal        : Php" + String.format("%.2f", totalDed));
-        System.out.println("Net Salary         : Php" + String.format("%.2f", net2));
+        System.out.println("  SSS             : Php" + sss);
+        System.out.println("  PhilHealth      : Php" + philhealth);
+        System.out.println("  Pag-IBIG        : Php" + pagibig);
+        System.out.println("  Tax             : Php" + whTax);
+        System.out.println("  Subtotal        : Php" + totalDed);
+        System.out.println("Net Salary         : Php" + net2);
         System.out.println("========================================");
     }
     
@@ -263,18 +263,18 @@ public class MotorPH {
             System.out.println("Name         : " + fname[i] + " " + lname[i]);
             System.out.println("Birthday     : " + bday[i]);
             System.out.println("\n  Cutoff: " + mn + " 1 to " + mn + " 15");
-            System.out.println("  Total Hours Worked : " + String.format("%.2f", hrs1) + " / 80.00 hrs");
-            System.out.println("  Gross Salary       : Php" + String.format("%.2f", gross1));
-            System.out.println("  Net Salary         : Php" + String.format("%.2f", net1));
+            System.out.println("  Total Hours Worked : " + hrs1 + " / 80.00 hrs");
+            System.out.println("  Gross Salary       : Php" + gross1);
+            System.out.println("  Net Salary         : Php" + net1);
             System.out.println("\n  Cutoff: " + mn + " 16 to " + mn + " " + lastDay);
-            System.out.println("  Total Hours Worked : " + String.format("%.2f", hrs2) + " / " + String.format("%.2f", cap2) + " hrs");
-            System.out.println("  Gross Salary       : Php" + String.format("%.2f", gross2));
-            System.out.println("  SSS                : Php" + String.format("%.2f", sss));
-            System.out.println("  PhilHealth         : Php" + String.format("%.2f", philhealth));
-            System.out.println("  Pag-IBIG           : Php" + String.format("%.2f", pagibig));
-            System.out.println("  Tax                : Php" + String.format("%.2f", whTax));
-            System.out.println("  Total Deductions   : Php" + String.format("%.2f", totalDed));
-            System.out.println("  Net Salary         : Php" + String.format("%.2f", net2));
+            System.out.println("  Total Hours Worked : " + hrs2 + " / " + cap2 + " hrs");
+            System.out.println("  Gross Salary       : Php" + gross2);
+            System.out.println("  SSS                : Php" + sss);
+            System.out.println("  PhilHealth         : Php" + philhealth);
+            System.out.println("  Pag-IBIG           : Php" + pagibig);
+            System.out.println("  Tax                : Php" + whTax);
+            System.out.println("  Total Deductions   : Php" + totalDed);
+            System.out.println("  Net Salary         : Php" + net2);
             System.out.println("========================================");
         }
     }
@@ -465,10 +465,10 @@ public class MotorPH {
      */
     static double withholdingTax(double taxable) {
         if (taxable <= 20832)  return 0;
-        if (taxable <= 33332)  return (taxable - 20832) * 0.20;
-        if (taxable <= 66666)  return 2500 + (taxable - 33332) * 0.25;
-        if (taxable <= 166666) return 10833 + (taxable - 66666) * 0.30;
-        if (taxable <= 666666) return 40833.33 + (taxable - 166666) * 0.32;
+        if (taxable <= 33332)  return (taxable - 20833) * 0.20;
+        if (taxable <= 66666)  return 2500 + (taxable - 33333) * 0.25;
+        if (taxable <= 166666) return 10833 + (taxable - 66667) * 0.30;
+        if (taxable <= 666666) return 40833.33 + (taxable - 166667) * 0.32;
         return 200833.33 + (taxable - 666666) * 0.35;
     }
 
