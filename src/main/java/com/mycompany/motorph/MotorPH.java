@@ -566,12 +566,8 @@ public class MotorPH {
      * Calculate an employee's share of Pag-Ibig contributions.
      * 
      * 
-     * Example: Employee's gross is 5000.
-     * 1. They fall into the 1st bracket (300 premium).
-     * 2. The premium is then multiplied by 0.50 to get the employee's share.
-     * 
-     * If the base salary is 1500 or less, only 0.01 of the base is taken.
-     * If greater than 1500, 0.02 of the base is taken.
+     * Example: Employee's base is 1000
+     * THe base is multiplied only by 1%.
      * 
      * @param base The employee's base salary.
      * @return The Pag-Ibig contribution, which is maximum 100.
