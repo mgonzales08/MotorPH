@@ -121,6 +121,14 @@ public class MotorPH {
         }
     }
 
+    /**
+     * ==============================================================
+     * Displays the payslip menu and handles user interaction.
+     * For generating a payslip for either a specific employee or all employees.
+     * 
+     * @param sc Scanner object used to read user input.
+     * ==============================================================
+     */
     static void runPayslipMenu(Scanner sc) {
         while (true) {
             System.out.println("\n---- Generate Payslip ----");
@@ -140,25 +148,34 @@ public class MotorPH {
             }
         }
     }
-
+    
     static void processSingleEmployee(Scanner sc) {
+        //Asks user to input a valid employee ID
         System.out.print("Employee No.: ");
         String num = sc.nextLine().trim();
 
+        //Searches for the inputted employee ID in the employee data 
         int idx = -1;
         for (int i = 0; i < empNum.length; i++) {
             if (num.equals(empNum[i])) { idx = i; break; }
         }
+
+        //If employee ID is invalid, message is displayed and user will be prompted to try again.
         if (idx == -1) { System.out.println("Employee number does not exist."); return; }
 
+        //Prompt user to choose a month to process payroll for
         int mo = chooseMonth(sc);
-        if (mo == -1) return;
+        if (mo == -1) return; //exits if selection is canceled
 
+        //Retrieves employee's hourly rate and basic pay
         double rate = Double.parseDouble(hrRate[idx]);
         double base = Double.parseDouble(basePay[idx]);
 
+        //Hrs worked for first and second cutoff of the month
         double hrs1   = getHours(num, "first",  mo);
         double hrs2   = getHours(num, "second", mo);
+
+        //Calculates gross pay for each cutoff
         double gross1 = hrs1 * rate;
         double gross2 = hrs2 * rate;
 
