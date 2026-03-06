@@ -61,12 +61,18 @@ public class MotorPH {
      */
     public static void main(String[] args) throws FileNotFoundException {
 
+        //Load employee information from csv files
         loadEmployees("resources/motorphemployeedata.csv");
+
+        //Load daily time record file
         loadDTR("resources/loginandout.csv");
+
+        //Computes the daily work hours from the DTR
         computeDailyHours();
 
         Scanner sc = new Scanner(System.in);
 
+        //Asks the user for login credentials
         System.out.print("Username: ");
         String user = sc.nextLine();
         System.out.print("Password: ");
@@ -74,8 +80,12 @@ public class MotorPH {
 
         // two roles: regular employee (view own info) and payroll staff (process payslips)
         if ("employee".equals(user) && "12345".equals(pass)) {
+
+            //Opens employee portal
             runEmployeePortal(sc);
         } else if ("payroll_staff".equals(user) && "12345".equals(pass)) {
+
+            //Opens payroll portal
             runPayrollPortal(sc);
         } else {
             System.out.println("Incorrect username and/or password. Please try again.");
@@ -446,6 +456,7 @@ public class MotorPH {
             parsedIn[i]  = LocalTime.parse(timeIn[i].trim(),  fmt);
             parsedOut[i] = LocalTime.parse(timeOut[i].trim(), fmt);
 
+            //Employee arrived on time
             if (!parsedIn[i].isAfter(grace)) {
                 // on time — full 8 hours
                 dailyHours[i] = 8.0;
