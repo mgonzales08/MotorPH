@@ -158,13 +158,18 @@ public class MotorPH {
      */
     static void runPayrollPortal(Scanner sc) {
         while (true) {
+
+            //Display payroll portal
             System.out.println("\n---- Payroll Portal ----");
             System.out.println("[1] Generate Payslip");
             System.out.println("[2] Exit");
             String pick = sc.nextLine().trim();
 
+            //Option 1 goes to the payslip generation menu
             if ("1".equals(pick)) {
                 runPayslipMenu(sc);
+
+            //Option 2 exits the payroll menu
             } else if ("2".equals(pick)) {
                 System.out.println("Exiting payroll system.");
                 sc.close();
@@ -186,16 +191,22 @@ public class MotorPH {
      */
     static void runPayslipMenu(Scanner sc) {
         while (true) {
+
+            //Displays the payslip menu option
             System.out.println("\n---- Generate Payslip ----");
             System.out.println("[1] Single Employee");
             System.out.println("[2] All Employees");
             System.out.println("[3] Exit");
             String pick = sc.nextLine().trim();
 
+            //If the user chooses option 1, then it calls the method that processes payroll for one employee only
             if ("1".equals(pick)) {
                 processSingleEmployee(sc);
+
+            //If the user chooses option 2, then it calls the method that processes payroll for all employees
             } else if ("2".equals(pick)) {
                 processAllEmployees(sc);
+                
             } else if ("3".equals(pick)) {
                 System.out.println("Exiting payroll system.");
                 sc.close();
