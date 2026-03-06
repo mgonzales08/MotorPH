@@ -241,21 +241,18 @@ public class MotorPH {
 
             String mn   = monthLabel(mo);
             int lastDay = YearMonth.of(2024, mo).lengthOfMonth();
-            double cap2 = (lastDay == 31) ? 88.0 : 80.0;
 
             System.out.println("\n========================================");
             System.out.println("  Cutoff: " + mn + " 1 to " + mn + " 15");
-            System.out.println("  (8 hrs/day x 5 days/wk x 2 wks = 80 hrs max)");
             System.out.println("========================================");
-            System.out.println("Total Hours Worked : " + hrs1 + " / 80.00 hrs");
+            System.out.println("Total Hours Worked : " + hrs1);
             System.out.println("Gross Salary       : Php" +  gross1);
             System.out.println("Net Salary         : Php" + net1);
 
             System.out.println("\n========================================");
             System.out.println("  Cutoff: " + mn + " 16 to " + mn + " " + lastDay);
-            System.out.println("  (8 hrs/day x 5 days/wk x 2 wks = " + cap2 + " hrs max)");
             System.out.println("========================================");
-            System.out.println("Total Hours Worked : " + hrs2 + " / " + cap2 + " hrs");
+            System.out.println("Total Hours Worked : " + hrs2);
             System.out.println("Gross Salary       : Php" + gross2);
             System.out.println("\n--- Statutory Deductions ---");
             System.out.println("  SSS             : Php" + sss);
@@ -284,10 +281,8 @@ public class MotorPH {
     static void processAllEmployees(Scanner sc) {
         // Loops from June to December
         for (int mo = 6; mo <= 12; mo++) {
-            // Maximum hours for second cutoff; 88 if month has 31 days, else 80.
             String mn   = monthLabel(mo);
             int lastDay = YearMonth.of(2024, mo).lengthOfMonth();
-            double cap2 = (lastDay == 31) ? 88.0 : 80.0;
 
             // Loop through all employees.
             for (int i = 0; i < empNum.length; i++) {
@@ -322,11 +317,11 @@ public class MotorPH {
                 System.out.println("Name         : " + fname[i] + " " + lname[i]);
                 System.out.println("Birthday     : " + bday[i]);
                 System.out.println("\n  Cutoff: " + mn + " 1 to " + mn + " 15");
-                System.out.println("  Total Hours Worked : " + hrs1 + " / 80.00 hrs");
+                System.out.println("  Total Hours Worked : " + hrs1);
                 System.out.println("  Gross Salary       : Php" + gross1);
                 System.out.println("  Net Salary         : Php" + net1);
                 System.out.println("\n  Cutoff: " + mn + " 16 to " + mn + " " + lastDay);
-                System.out.println("  Total Hours Worked : " + hrs2 + " / " + cap2 + " hrs");
+                System.out.println("  Total Hours Worked : " + hrs2);
                 System.out.println("  Gross Salary       : Php" + gross2);
                 System.out.println("  SSS                : Php" + sss);
                 System.out.println("  PhilHealth         : Php" + philhealth);
@@ -456,7 +451,7 @@ public class MotorPH {
      * @param num  The employee ID number as a String must match dtrEmpNum array).
      * @param half The cutoff period; must be either "first" (days 1-15) or "second" (days 16-end).
      * @param mo   The month of the year as an integer.
-     * @return     The total hours worked, capped at the maximum standard hours for the period.
+     * @return     The total hours worked for the period.
      * 
      * ====================================================================
      */
@@ -474,10 +469,7 @@ public class MotorPH {
                 if ("second".equals(half) && day >= 16 && day <= 31) total += dailyHours[j];
             } catch (Exception ignored) {}
         }
-        // cap to max working hours for the period
-        int lastDay = YearMonth.of(2024, mo).lengthOfMonth();
-        int maxDays = "first".equals(half) ? 10 : (lastDay == 31 ? 11 : 10);
-        return Math.min(total, maxDays * 8.0);
+        return total;
     }
 
    /**
