@@ -199,13 +199,17 @@ public class MotorPH {
      * ==============================================================
      */
     static void processSingleEmployee(Scanner sc) {
+        //Asks user to input a valid employee ID
         System.out.print("Employee No.: ");
         String num = sc.nextLine().trim();
 
+        //Searches for the inputted employee ID in the employee data 
         int idx = -1;
         for (int i = 0; i < empNum.length; i++) {
             if (num.equals(empNum[i])) { idx = i; break; }
         }
+
+        //If employee ID is invalid, message is displayed and user will be prompted to try again.
         if (idx == -1) { System.out.println("Employee number does not exist."); return; }
         
         System.out.println("\n----Employee Details----");
