@@ -94,16 +94,20 @@ public class MotorPH {
      * ==============================================================
      */
     static void runEmployeePortal(Scanner sc) {
+        //Loop keeps the program running, until the user chooses to exit
         while (true) {
             System.out.println("\n---- Employee Portal ----");
             System.out.println("[1] Check Employee Profile");
             System.out.println("[2] Exit");
             String pick = sc.nextLine().trim();
 
+            //Option 1 views employee profile
             if ("1".equals(pick)) {
                 System.out.print("Enter your Employee No.: ");
                 String num = sc.nextLine().trim();
                 boolean hit = false;
+
+                //Searches employee number in the employee list
                 for (int i = 0; i < empNum.length; i++) {
                     if (num.equals(empNum[i])) {
                         System.out.println("\nEmployee No. : " + empNum[i]);
@@ -113,13 +117,21 @@ public class MotorPH {
                         break;
                     }
                 }
+
+                //If employee ID was not found
                 if (!hit) System.out.println("Employee number does not exist. Please check the number and try again.");
 
-            } else if ("2".equals(pick)) {
+            } 
+
+                //Options 2 exits the program
+            else if ("2".equals(pick)) {
                 System.out.println("Exiting payroll system.");
                 sc.close();
                 System.exit(0);
-            } else {
+            } 
+
+                //If user enters an invalid option
+            else {
                 System.out.println("Please enter 1 or 2 only.");
             }
         }
