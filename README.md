@@ -1,9 +1,9 @@
 # Team Members
-1. Abad, Dominic Gideon Remetio
-2. Dayag, Luis Carlo
-3. Gonzales, Marlu
-4. Lagitao, Dominic
-5. Lusares, Cail Maven
+1. Abad, Dominic Gideon Remetio - led current stage, finalized CSV method flows, reviewed code  
+2. Dayag, Luis Carlo - unit testing, explanation for main method flow, added comments
+3. Gonzales, Marlu - led the writing of the calculation logic, reviewed code
+4. Lagitao, Dominic - assisted during migration to Java with Maven, unit testing, drafted flow presentation script, added comments 
+5. Lusares, Cail Maven - updated project plan, created flow presentation, unit testing, added comments
 
 # What is the MotorPH Payroll System?
 Based on Java with Maven, this payroll system, once running in your terminal, allows you to perform the following:
