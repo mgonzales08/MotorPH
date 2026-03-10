@@ -334,19 +334,24 @@ public class MotorPH {
             parsedIn[i]  = LocalTime.parse(timeIn[i].trim(),  fmt);
             parsedOut[i] = LocalTime.parse(timeOut[i].trim(), fmt);
 
-            if (!parsedIn[i].isAfter(grace)) {
-                // on time — full 8 hours
-                dailyHours[i] = 8.0;
-            } else {
-                // late — cap logout at 5PM, deduct 1 hr lunch break
-                LocalTime logout = parsedOut[i].isAfter(end) ? end : parsedOut[i];
-                long mins = Duration.between(parsedIn[i], logout).toMinutes();
-                mins = (mins > 60) ? mins - 60 : 0;
-                dailyHours[i] = Math.min(mins / 60.0, 8.0);
-            }
-        }
-    }
+            if (!parsedIn[i].isAfter(grace) && !parsedOut[i].isBefore(end)) {
 
+                dailyHours[i] = 8.0;
+            } else {
+
+                LocalTime start  = parsedIn[i].isAfter(grace) ? parsedIn[i] : LocalTime.of(8, 0); 
+                LocalTime logout = parsedOut[i].isAfter(end)  ? end : parsedOut[i];
+                if (logout.isBefore(start)) {
+                    dailyHours[i] = 0;
+                    continue;
+                }
+                long mins = Duration.between(start, logout).toMinutes();
+                mins = (mins > 60) ? mins - 60 : 0;          
+                dailyHours[i] = Math.min(mins / 60.0, 8.0);
+            }
+        }
+    }
+            
     // sums up hours for a given employee, month, and cutoff period
     static double getHours(String num, String half, int mo) {
         double total = 0;
@@ -370,7 +375,7 @@ public class MotorPH {
 
    /**
      * ====================================================================
-     * Calculates an employee's SSS contribution based on the gross salary.
+     * Calculates an employee's SSS contribuion based on the gross salary.
      * 
      * The contribution is determined using fixed salary brackets. 
      * Each bracket has a set contribution amount. 
