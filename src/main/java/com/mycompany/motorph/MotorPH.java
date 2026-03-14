@@ -32,18 +32,18 @@ import java.util.Scanner;
 public class MotorPH {
 
     // Stores employee numbers, first names, last names, birthdays, base pay, and hourly rates.
-    static String[] empNum   = new String[34];
-    static String[] lname    = new String[34];
-    static String[] fname    = new String[34];
-    static String[] bday     = new String[34];
-    static String[] basePay  = new String[34];
-    static String[] hrRate   = new String[34];
+    static String[] employeeNumber   = new String[34];
+    static String[] lastName    = new String[34];
+    static String[] firstName    = new String[34];
+    static String[] birthDate     = new String[34];
+    static String[] baseSalary  = new String[34];
+    static String[] hourlyRate   = new String[34];
 
     // Temporary buffer for CSV parsing
     static String[] cols     = new String[19];
 
     // Daily Time Record  — Stores employee numbers, dates, time-in, time-out, parsed times, and computed daily hours.
-    static String[]    dtrEmpNum  = new String[5168];
+    static String[]    dtremployeeNumber  = new String[5168];
     static String[]    dtrDate    = new String[5168];
     static String[]    timeIn     = new String[5168];
     static String[]    timeOut    = new String[5168];
@@ -103,11 +103,11 @@ public class MotorPH {
                 System.out.print("Enter your Employee No.: ");
                 String num = sc.nextLine().trim();
                 boolean hit = false;
-                for (int i = 0; i < empNum.length; i++) {
-                    if (num.equals(empNum[i])) {
-                        System.out.println("\nEmployee No. : " + empNum[i]);
-                        System.out.println("Name         : " + fname[i] + " " + lname[i]);
-                        System.out.println("Birthday     : " + bday[i]);
+                for (int i = 0; i < employeeNumber.length; i++) {
+                    if (num.equals(employeeNumber[i])) {
+                        System.out.println("\nEmployee No. : " + employeeNumber[i]);
+                        System.out.println("Name         : " + firstName[i] + " " + lastName[i]);
+                        System.out.println("Birthday     : " + birthDate[i]);
                         hit = true;
                         break;
                     }
@@ -193,21 +193,21 @@ public class MotorPH {
         System.out.print("Employee No.: ");
         String num = sc.nextLine().trim();
 
-        int idx = -1;
-        for (int i = 0; i < empNum.length; i++) {
-            if (num.equals(empNum[i])) { idx = i; break; }
+        int employeeIndex = -1;
+        for (int i = 0; i < employeeNumber.length; i++) {
+            if (num.equals(employeeNumber[i])) { employeeIndex = i; break; }
         }
         
-        if (idx == -1) { System.out.println("Employee number does not exist."); return; }
+        if (employeeIndex == -1) { System.out.println("Employee number does not exist."); return; }
 
         System.out.println("\n----Employee Details----");
-        System.out.println("Employee #   : " + empNum[idx]);
-        System.out.println("Employee Name: " + fname[idx] + " " + lname[idx]);
-        System.out.println("Birthday     : " + bday[idx]);
+        System.out.println("Employee #   : " + employeeNumber[employeeIndex]);
+        System.out.println("Employee Name: " + firstName[employeeIndex] + " " + lastName[employeeIndex]);
+        System.out.println("Birthday     : " + birthDate[employeeIndex]);
 
         for (int mo = 6; mo <= 12; mo++) {
-            double rate = Double.parseDouble(hrRate[idx]);
-            double base = Double.parseDouble(basePay[idx]);
+            double rate = Double.parseDouble(hourlyRate[employeeIndex]);
+            double base = Double.parseDouble(baseSalary[employeeIndex]);
             double hrs1   = getHours(num, "first",  mo);
             double hrs2   = getHours(num, "second", mo);
             double gross1 = hrs1 * rate;
@@ -262,12 +262,12 @@ public class MotorPH {
             String mn   = monthLabel(mo);
             int lastDay = YearMonth.of(2024, mo).lengthOfMonth();
 
-            for (int i = 0; i < empNum.length; i++) {
-                if (empNum[i] == null) continue;
+            for (int i = 0; i < employeeNumber.length; i++) {
+                if (employeeNumber[i] == null) continue;
 
-                String num  = empNum[i];
-                double rate = Double.parseDouble(hrRate[i]);
-                double base = Double.parseDouble(basePay[i]);
+                String num  = employeeNumber[i];
+                double rate = Double.parseDouble(hourlyRate[i]);
+                double base = Double.parseDouble(baseSalary[i]);
                 double hrs1   = getHours(num, "first",  mo);
                 double hrs2   = getHours(num, "second", mo);
                 double gross1 = hrs1 * rate;
@@ -284,8 +284,8 @@ public class MotorPH {
 
                 System.out.println("\n========================================");
                 System.out.println("Employee #   : " + num);
-                System.out.println("Name         : " + fname[i] + " " + lname[i]);
-                System.out.println("Birthday     : " + bday[i]);
+                System.out.println("Name         : " + firstName[i] + " " + lastName[i]);
+                System.out.println("Birthday     : " + birthDate[i]);
                 System.out.println("\n  Cutoff: " + mn + " 1 to " + mn + " 15");
                 System.out.println("  Total Hours Worked : " + hrs1);
                 System.out.println("  Gross Salary       : Php" + gross1);
@@ -321,12 +321,12 @@ public class MotorPH {
             while (f.hasNextLine()) {
                 // Uses a splitCSV method to slice off the commas.
                 String[] c = splitCSV(f.nextLine());
-                empNum[i]  = c[0];
-                lname[i]   = c[1];
-                fname[i]   = c[2];
-                bday[i]    = c[3];
-                basePay[i] = c[13].replace(",", "");
-                hrRate[i]  = c[18].replace(",", "");
+                employeeNumber[i]  = c[0];
+                lastName[i]   = c[1];
+                firstName[i]   = c[2];
+                birthDate[i]    = c[3];
+                baseSalary[i] = c[13].replace(",", "");
+                hourlyRate[i]  = c[18].replace(",", "");
                 i++;
             }
             f.close();
@@ -353,7 +353,7 @@ public class MotorPH {
             while (f.hasNextLine()) {
                 // Uses a splitCSV method to slice off the commas.
                 String[] c   = splitCSV(f.nextLine());
-                dtrEmpNum[i] = c[0];
+                dtremployeeNumber[i] = c[0];
                 dtrDate[i]   = c[3];
                 timeIn[i]    = c[4];
                 timeOut[i]   = c[5];
@@ -412,7 +412,7 @@ public class MotorPH {
      * Returns total hours worked by an employee for a given month and cutoff.
      * This method is called in both processSingleEmployee and processAllEmployees to calculate gross pay.
      * 
-     * @param num  the employee ID number as a String must match an entry in the "dtrEmpNum" array.
+     * @param num  the employee ID number as a String must match an entry in the "dtremployeeNumber" array.
      * @param half the cutoff period; must be either "first" (days 1-15) or "second" (days 16-end).
      * @param mo   the month of the year as an integer.
      * @return     the total hours worked for the period.
@@ -421,7 +421,7 @@ public class MotorPH {
     static double getHours(String num, String half, int mo) {
         double total = 0;
         for (int j = 0; j < 5168; j++) {
-            if (!num.equals(dtrEmpNum[j])) continue;
+            if (!num.equals(dtremployeeNumber[j])) continue;
             if (dtrDate[j] == null) continue;
             try {
                 String[] d = dtrDate[j].trim().split("/");
